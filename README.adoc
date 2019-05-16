@@ -10,7 +10,7 @@ Vert.x is a resource-efficient toolkit for building all kinds of modern distribu
 == What you will build and run
 
 * You will build a simple micro-service that computes the sum of 2 numbers through a HTTP JSON endpoint.
-* We will check the options for improving startup time with OpenJ9.
+* We will look at the options for improving startup time with OpenJ9.
 * We will measure the https://en.wikipedia.org/wiki/Resident_set_size[resident set size] memory footprint on OpenJ9 under a workload.
 * You will build a Docker image for the micro-service and OpenJ9.
 * We will discuss how to improve the startup time of Docker containers and how to tune OpenJ9 in that environment.
