@@ -109,6 +109,12 @@ However the next runs are all near *300ms*, with a best score of *293ms* which i
 
 == Memory usage
 
+Let us now measure the memory usage of the micro-service with OpenJ9 and compare with OpenJDK.
+
+[WARNING]
+This is not a rigorous benchmark.
+You have been warned 😉
+
 === Generate some workload
 
 We are using Locust to generate some workload.
