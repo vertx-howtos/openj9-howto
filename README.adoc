@@ -59,13 +59,6 @@ We can run the service:
 $ ./gradlew run
 ----
 
-We can also build a JAR archive will all dependencies bundled, then execute it:
-
-----
-$ ./gradlew shadowJar
-$ java -jar build/libs/openj9-howto-all.jar
-----
-
 and then test it with https://httpie.org/[HTTPie]:
 
 ----
@@ -80,6 +73,14 @@ content-length: 9
 
 $
 ----
+
+We can also build a JAR archive will all dependencies bundled, then execute it:
+
+----
+$ ./gradlew shadowJar
+$ java -jar build/libs/openj9-howto-all.jar
+----
+
 
 == Improving startup time
 
@@ -119,32 +120,52 @@ include::locustfile.py[]
 ----
 
 We can then run `locust`, and connect to http://localhost:8089 to start a test.
-Let us simulate 2000 users with a 50 new users per second hatch rate.
-This gives us about 600 requests per second.
+Let us simulate 100 users with a 10 new users per second hatch rate.
+This gives us about 130 requests per second.
 
 === Measuring RSS
 
 The https://quarkus.io/guides/performance-measure[Quarkus team has a good guide on measuring RSS].
-
-By letting Locust operate with 2000 users for a few minutes, I get a RSS of about *96 MB*.
-
-With OpenJDK 11 and no tuning, I get a RSS of about *247 MB*.
-
-Let us use OpenJDK 11 again but now with some limits:
+On Linux you can use either `ps` or `pmap` to measure RSS, while on macOS `ps` will do.
+I am using macOS, so once I have the process id of a running application I can get its RSS as follows:
 
 ----
-$ java -Xmx32m -Xss256k -jar build/libs/openj9-howto-all.jar
+$ ps x -o pid,rss,command -p 99425
+  PID  RSS   COMMAND
+99425  89844 java -jar build/libs/openj9-howto-all.jar
 ----
 
-RSS usage goes to *124 MB* on my machine.
+For all measures we start Locust and let it warm up the micro-service.
+After a minute we reset the stats and restart a test, then look into RSS and 99% latency.
+We will try to run the application with no tuning and then by limiting the maximum heap size (see the `-Xmx` flag).
 
-Now let us go back to OpenJ9 with a similar configuration:
+With OpenJDK 11 and no tuning:
 
-----
-$ java -Xmx32m -Xss256k -Xshareclasses -Xshareclasses:name=sum -Xshareclasses:cacheDir=_cache -jar build/libs/openj9-howto-all.jar
-----
+* RSS: ~446 MB
+* 99% latency: 8ms
 
-RSS usage is about *73 MB* on my machine.
+With OpenJDK 11 and `-Xmx8m`:
+
+* RSS: ~111 MB
+* 99% latency: 8ms
+
+
+With OpenJ9/OpenJDK 11 and no tuning:
+
+* RSS: ~84 MB
+* 99% latency: 8ms
+
+With OpenJ9/OpenJDK 11 and `-Xmx8m`:
+
+* RSS: ~63 MB
+* 99% latency: 9ms
+
+OpenJ9 is clearly very efficient with respect to memory consumption, without compromising the latency.
+
+[TIP]
+====
+As usual take these numbers with a grain of salt and perform your own measures on your own services with a workload that is appropriate to your usages.
+====
 
 == Building and running a Docker image
 
@@ -176,6 +197,15 @@ $ docker run -it --rm -v /tmp/_cache:/app/_cache -p 8080:8080 openj9-app
 ----
 
 Again the first container is slower to start, while the next ones benefit from the cache.
+
+[TIP]
+====
+On some platforms `cgroups` may not grant permissions to access the class data cache directory.
+You can use the `z` flag to fix such issues, as in:
+
+`docker (...) -v /tmp/_cache:/app/_cache:z (...)`
+
+====
 
 == Summary
 
