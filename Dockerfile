@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk12-openj9:alpine-slim
+FROM ibm-semeru-runtimes:open-21-jdk
 RUN mkdir -p /app/_cache
 COPY build/libs/openj9-howto-all.jar /app/app.jar
 VOLUME /app/_cache
