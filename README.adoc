@@ -18,7 +18,7 @@ Vert.x is a resource-efficient toolkit for building all kinds of modern distribu
 == What you need
 
 - A text editor or IDE
-- Java 8 higher
+- Java 21
 - OpenJ9
 - Maven or Gradle
 - Docker

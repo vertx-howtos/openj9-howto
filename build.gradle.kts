@@ -1,7 +1,7 @@
 plugins {
   java
   application
-  id("com.github.johnrengelman.shadow") version "5.0.0"
+  id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -13,10 +13,13 @@ dependencies {
   implementation("io.vertx:vertx-web:${vertxVersion}")
 }
 
-application {
-  mainClassName = "io.vertx.howtos.openj9.Main"
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
 }
 
-tasks.wrapper {
-  gradleVersion = "5.4.1"
+
+application {
+  mainClass = "io.vertx.howtos.openj9.Main"
 }

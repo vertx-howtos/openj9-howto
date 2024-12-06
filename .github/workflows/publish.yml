@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'semeru'
-          java-version: '11'
+          java-version: '21'
       - name: Run builds
         run: ./.run.builds.sh
       - name: Setup Ruby
