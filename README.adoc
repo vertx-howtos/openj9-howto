@@ -19,10 +19,16 @@ Vert.x is a resource-efficient toolkit for building all kinds of modern distribu
 
 - A text editor or IDE
 - Java 8 higher
-- OpenJ9 (we recommend a build from https://adoptopenjdk.net/[AdoptOpenJDK])
+- OpenJ9
 - Maven or Gradle
 - Docker
 - https://locust.io/[Locust] to generate some workload
+
+[NOTE]
+====
+Eclipse Foundation projects are not permitted to distribute, market or promote JDK binaries unless they have passed a Java SE Technology Compatibility Kit licensed from Oracle, to which the Eclipse OpenJ9 project does not currently have access.
+You can either build your own Eclipse OpenJ9 binary, or download an https://developer.ibm.com/languages/java/semeru-runtimes/downloads/[IBM Semeru runtime].
+====
 
 == Create a project
 
