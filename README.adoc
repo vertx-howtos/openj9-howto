@@ -93,7 +93,7 @@ $ java -jar build/libs/openj9-howto-all.jar
 The microservice reports the startup time by measuring the time between the `main` method entry, and the callback notification when the HTTP server has started.
 
 We can do a few runs of `java -jar build/libs/openj9-howto-all.jar` and pick the best time.
-On my machine the best I got was *639ms*.
+On my machine the best I got was *311ms*.
 
 OpenJ9 offers both an ahead-of-time compiler and a class data shared cache for improving startup time as well as reducing memory consumption.
 The first run is typical costly, but then all subsequent runs will benefit from the caches, which are also regularly updated.
@@ -110,16 +110,18 @@ Let us have a few run of:
 $ java -Xshareclasses -Xshareclasses:name=sum -Xshareclasses:cacheDir=_cache -jar build/libs/openj9-howto-all.jar
 ----
 
-On my machine the first run takes *1098ms*, which is way more than *639ms*!
-However, the next runs are all near *300ms*, with the best score of *293ms* which is very good for a JVM application start time.
+On my machine the first run takes *457ms*, which is "much" more than *311ms*!
+However, the next runs are all near *130ms*, with the best score of *112ms* which is very good for a JVM application start time.
 
 == Memory usage
 
 Let us now measure the memory usage of the microservice with OpenJ9 and compare with OpenJDK.
 
 [WARNING]
+====
 This is not a rigorous benchmark.
 You have been warned 😉
+====
 
 === Generate some workload
 
@@ -142,35 +144,24 @@ On Linux you can use either `ps` or `pmap` to measure RSS, while on macOS `ps` w
 I am using macOS, so once I have the process id of a running application I can get its RSS as follows:
 
 ----
-$ ps x -o pid,rss,command -p 99425
-  PID  RSS   COMMAND
-99425  89844 java -jar build/libs/openj9-howto-all.jar
+$ ps x -o pid,rss,command -p 66820
+    PID   RSS COMMAND
+  66820 124032 java -jar build/libs/openj9-howto-all.jar
 ----
 
 For all measures we start Locust and let it warm up the microservice.
 After a minute we reset the stats and restart a test, then look into RSS and 99% latency.
 We will try to run the application with no tuning and then by limiting the maximum heap size (see the `-Xmx` flag).
 
-With OpenJDK 11 and no tuning:
+With OpenJDK 21 and no tuning:
 
-* RSS: ~446 MB
-* 99% latency: 8ms
+* RSS: ~143 MB
+* 99% latency: 1ms
 
-With OpenJDK 11 and `-Xmx8m`:
+With Semeru 21 and no tuning:
 
-* RSS: ~111 MB
-* 99% latency: 8ms
-
-
-With OpenJ9/OpenJDK 11 and no tuning:
-
-* RSS: ~84 MB
-* 99% latency: 8ms
-
-With OpenJ9/OpenJDK 11 and `-Xmx8m`:
-
-* RSS: ~63 MB
-* 99% latency: 9ms
+* RSS: ~90 MB
+* 99% latency: 1ms
 
 OpenJ9 is clearly very efficient with respect to memory consumption, without compromising the latency.
 
@@ -231,4 +222,3 @@ You can use the `z` flag to fix such issues, as in:
 
 * https://www.eclipse.org/openj9/docs/[OpenJ9 documentation]
 * https://www.eclipse.org/openj9/oj9_performance.html[OpenJ9 performance]
-* https://hub.docker.com/r/adoptopenjdk/openjdk12-openj9[AdoptOpenJDK OpenJ9 / OpenJDK 12 Docker image]
