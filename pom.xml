@@ -10,7 +10,7 @@
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <vertx.version>3.7.0</vertx.version>
+    <vertx.version>5.0.0.CR2</vertx.version>
   </properties>
 
   <dependencyManagement>
@@ -33,10 +33,6 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-web-api-contract</artifactId>
     </dependency>
   </dependencies>
 

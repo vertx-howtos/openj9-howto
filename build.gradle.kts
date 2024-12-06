@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-  val vertxVersion = "3.7.0"
+  val vertxVersion = "5.0.0.CR2"
   implementation("io.vertx:vertx-web:${vertxVersion}")
 }
 
